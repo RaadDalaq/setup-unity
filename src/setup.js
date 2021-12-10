@@ -98,11 +98,14 @@ async function installUnityEditor(unityHubPath, installPath, unityVersion, unity
 }
 
 async function installUnityModules(unityHubPath, unityVersion, unityModules, unityModulesChild) {
-    const modulesArgs = unityModules.map(s => `--module ${s.toLowerCase()}`).join(' ');
     const childModulesArg = unityModulesChild ? '--childModules' : '';
-    const stdout = await executeHub(unityHubPath, `install-modules --version ${unityVersion} ${modulesArgs} ${childModulesArg}`);
-    if (!stdout.includes('successfully') && !stdout.includes("it's already installed")) {
-        throw new Error('unity modules installation failed');
+    
+    for (let index = 0; index < unityModules.length; index++) {
+        const unityModule = unityModules[index].toLowerCase()
+        const stdout = await executeHub(unityHubPath, `install-modules --version ${unityVersion} --module ${unityModule} ${childModulesArg}`);
+        if (!stdout.includes('successfully') && !stdout.includes("it's already installed")) {
+            throw new Error('unity modules installation failed');
+        }
     }
 }
 
